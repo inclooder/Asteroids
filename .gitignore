@@ -171,4 +171,8 @@ UpgradeLog*.htm
 *.bim_*.settings
 
 # Microsoft Fakes
+<<<<<<< HEAD
 FakesAssemblies/
+=======
+FakesAssemblies/
+>>>>>>> 717ff7fc999b9246ece1e377f9703d81f0e178ba
