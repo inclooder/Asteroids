@@ -11,14 +11,12 @@ namespace Asteroids
         private GraphicsDevice graphics_device;
         private AssetsManager assets_manager;
         private SpriteBatch batch;
-        private GameEngine game_engine;
+      
 
-        public VisualSystem(GameEngine game_engine)
+        public VisualSystem(GameEngine game_engine) :base(game_engine)
         {
-            this.game_engine = game_engine;
             graphics_device = game_engine.getGraphicsDevice();
             this.assets_manager = game_engine.getAssetsManager(); ;
-
             batch = new SpriteBatch(graphics_device);
         }
 

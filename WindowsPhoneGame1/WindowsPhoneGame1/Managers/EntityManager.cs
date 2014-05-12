@@ -16,6 +16,15 @@ namespace Asteroids
             return lastEntId++;
         }
 
+        public void RemoveEntity(int ent_id)
+        {
+          
+            foreach (System.Type component_type in components_store.Keys)
+            {
+                components_store[component_type].Remove(ent_id);    
+            }
+        }
+
         private Dictionary<int, List<EntityComponent>> GetComponentStore(System.Type store_type)
         {
             if (components_store.ContainsKey(store_type))

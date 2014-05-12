@@ -19,6 +19,17 @@ namespace Asteroids
             this.rotation = rotation;
         }
 
+        public RotationComponent(Vector2 direction)
+        {
+            direction.Normalize();
+            float angleFromVector =
+                  (float)Math.Atan2(direction.X, -direction.Y);
+
+            this.rotation = angleFromVector;
+
+
+        }
+
         public Matrix getRotationMatrix()
         {
             return Matrix.CreateRotationZ(rotation);

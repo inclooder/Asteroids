@@ -8,7 +8,7 @@ namespace Asteroids
 {
     class GravitySystem : GameSystem
     {
-        public GravitySystem(GameEngine game_engine)
+        public GravitySystem(GameEngine game_engine) : base(game_engine)
         {
 
         }

@@ -7,13 +7,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Asteroids
 {
-    class AsteroidRenderSystem : GameSystem
+    class AsteroidRenderSystem : GameGraphicSystem
     {
-        private GraphicsDevice graphics_device;
-        private BasicEffect effect;
-        private VertexBuffer vertexBuffer;
-        private GameEngine game_engine;
-        public AsteroidRenderSystem(GameEngine game_engine)
+        
+        
+        public AsteroidRenderSystem(GameEngine game_engine) : base(game_engine)
         {
             this.game_engine = game_engine;
             graphics_device = game_engine.getGraphicsDevice();
@@ -24,32 +22,39 @@ namespace Asteroids
             effect.VertexColorEnabled = true;
             effect.LightingEnabled = false;
             effect.FogEnabled = false;
+
+
+          
         }
        
         public override void process(float deltaTime, EntityManager entity_manager)
         {
+           
+
             int[] entities = entity_manager.GetEntitiesWithComponent(typeof(AsteroidBodyComponent));
             foreach(int entity in entities)
             {
                 AsteroidBodyComponent[] asteroid_body_components = entity_manager.GetComponentsOfType(entity, typeof(AsteroidBodyComponent)).Cast<AsteroidBodyComponent>().ToArray();
 
-
-
                 PositionComponent[] position_components = entity_manager.GetComponentsOfType(entity, typeof(PositionComponent)).Cast<PositionComponent>().ToArray();
                 RotationComponent[] rotation_components = entity_manager.GetComponentsOfType(entity, typeof(RotationComponent)).Cast<RotationComponent>().ToArray();
       
-
                 if (position_components.Length <= 0) break;
 
                 PositionComponent position_comp = position_components.First();
 
                 Matrix new_world_matrix = game_engine.getWorldMatrix();
 
+
+               
+                
                 if (rotation_components.Length > 0)
                 {
-                    rotation_components.First().rotation += 1 * deltaTime;
                     new_world_matrix *= rotation_components.First().getRotationMatrix();
                 }
+            
+
+
 
                 new_world_matrix = new_world_matrix * Matrix.CreateTranslation(new Vector3(position_comp.x, position_comp.y, 0));
 
@@ -77,9 +82,9 @@ namespace Asteroids
 
                         graphics_device.SetVertexBuffer(vertexBuffer);
 
-                        RasterizerState rasterizerState = new RasterizerState();
-                        rasterizerState.CullMode = CullMode.None;
-                        graphics_device.RasterizerState = rasterizerState;
+                       // RasterizerState rasterizerState = new RasterizerState();
+                        //rasterizerState.CullMode = CullMode.None;
+                        //graphics_device.RasterizerState = rasterizerState;
 
                         foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                         {
@@ -91,8 +96,9 @@ namespace Asteroids
 
                     }
                 }
-
+                
             }
+            
           
         }
     }

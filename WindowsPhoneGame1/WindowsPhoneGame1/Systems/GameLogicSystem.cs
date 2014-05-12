@@ -5,9 +5,7 @@ using System.Text;
 
 namespace Asteroids
 {
-    abstract class GameSystem
+    class GameLogicSystem
     {
-       
-        abstract public void process(float deltaTime, EntityManager entity_manager);
     }
 }

@@ -6,12 +6,12 @@ using Microsoft.Xna.Framework;
 
 namespace Asteroids
 {
-    public class Rectangle3d
+    public class RectangleFloat
     {
         private Vector3 pos;
         private float width, height;
 
-        public Rectangle3d(Vector3 pos, float width, float height)
+        public RectangleFloat(Vector3 pos, float width, float height)
         {
             this.pos = pos;
             this.width = width;

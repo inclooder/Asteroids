@@ -9,18 +9,31 @@ namespace Asteroids
 {
     class AsteroidBodyComponent : EntityComponent
     {
-        private static Color DEFAULT_COLOR = Color.Black;
+        private static Color[] avil_colors = new Color[]{
+            Color.Red,
+            Color.Blue,
+            Color.Green,
+            Color.Gray,
+            Color.Pink,
+            Color.Purple,
+            Color.Tomato,
+            Color.Teal,
+            Color.Tan,
+            Color.Maroon,
+            Color.Firebrick
+        };
+        
         private List<float> bones_length;
-        private Color color;
+        private Color[] colors;
         private List<VertexPositionColor> vertices_list;
         private Vector2[] bones;
 
 
-        public AsteroidBodyComponent(float[] bones_length, Color color)
+        public AsteroidBodyComponent(float[] bones_length, Color[] colors)
         {
             this.vertices_list = new List<VertexPositionColor>();
             this.bones_length = bones_length.ToList();
-            this.color = color;
+            this.colors = colors;
             updateVertices();
         }
 
@@ -28,20 +41,30 @@ namespace Asteroids
         {
             this.vertices_list = new List<VertexPositionColor>();
             this.bones_length = bones_length.ToList();
-            this.color = DEFAULT_COLOR;
+            randomizeColors();
             updateVertices();
         }
 
-        public Color getColor()
-        {
-            return color;
-        }
 
-        public void setColor(Color color)
+        public void randomizeColors()
         {
-            this.color = color;
+            Random rand = new Random();
+            colors = new Color[bones_length.Count];
+            List<int> colors_used = new List<int>();
+            for (int i = 0; i < bones_length.Count; i++)
+            {
+                
+                while (true)
+                {
+                    int ran = rand.Next(0, avil_colors.Length);
+                    if (colors_used.Contains(ran)) continue;
+                    colors[i] = avil_colors[ran];
+                    colors_used.Add(ran);
+                    break;
+                }
+            }
         }
-
+      
         private void updateVertices()
         {
             vertices_list.Clear();
@@ -61,29 +84,20 @@ namespace Asteroids
             int num_of_bones = bones.Length;
         
 
-            Color[] colors = new Color[] {    
-                            Color.Red,
-                            Color.Green,
-                            Color.Blue,
-                            Color.Violet,
-                            Color.Purple,
-                            Color.Pink,
-                            Color.PowderBlue,
-                            Color.Gray,
-                            Color.LightGreen,
-                            Color.Black
-                        };
+        
+
+            
 
             for (int i = 0; i < num_of_bones - 1; i++)
             {
                 vertices_list.Add(new VertexPositionColor(new Vector3(0, 0, 0), Color.Yellow));
-                vertices_list.Add(new VertexPositionColor(new Vector3(bones[i].X, bones[i].Y, 0), colors[i]));
-                vertices_list.Add(new VertexPositionColor(new Vector3(bones[i + 1].X, bones[i + 1].Y, 0), colors[i]));
+                vertices_list.Add(new VertexPositionColor(new Vector3(bones[i].X, bones[i].Y, 0), colors[i+1]));
+                vertices_list.Add(new VertexPositionColor(new Vector3(bones[i + 1].X, bones[i + 1].Y, 0), colors[i+1]));
             }
 
             vertices_list.Add(new VertexPositionColor(new Vector3(0, 0, 0), Color.Yellow));
-            vertices_list.Add(new VertexPositionColor(new Vector3(bones.Last().X, bones.Last().Y, 0), Color.LightSkyBlue));
-            vertices_list.Add(new VertexPositionColor(new Vector3(bones.First().X, bones.First().Y, 0), Color.LightSkyBlue));
+            vertices_list.Add(new VertexPositionColor(new Vector3(bones.Last().X, bones.Last().Y, 0), colors[0]));
+            vertices_list.Add(new VertexPositionColor(new Vector3(bones.First().X, bones.First().Y, 0), colors[0]));
                         
         }
 

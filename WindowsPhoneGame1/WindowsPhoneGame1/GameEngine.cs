@@ -37,15 +37,14 @@ namespace Asteroids
         int sprite2Height;
         int sprite2Width;
 
-        VertexBuffer vertexBuffer;
-        BasicEffect basicEffect;
+    
         Matrix world, view, projection;
         SoundEffect soundEffect;
 
         public GameEngine()
         {
             graphics = new GraphicsDeviceManager(this);
-            
+
             Content.RootDirectory = "Content";
 
             // Frame rate is 30 fps by default for Windows Phone.
@@ -75,7 +74,7 @@ namespace Asteroids
         {
             return GraphicsDevice;
         }
-        
+
         public AssetsManager getAssetsManager()
         {
             return assets_manager;
@@ -86,23 +85,23 @@ namespace Asteroids
             return entity_manager;
         }
 
-        public Rectangle3d getScreenRectangleInWorldCoordinates()
+        public Rectangle getScreenRectangleInWorldCoordinates()
         {
             Rectangle viewport_rect = GraphicsDevice.Viewport.Bounds;
             Vector3 top_left = new Vector3(viewport_rect.X, viewport_rect.Y, 0);
             Vector3 bottom_right = new Vector3(viewport_rect.Width + top_left.X, viewport_rect.Height + top_left.Y, 0);
 
-            Vector3 world_top_left = GraphicsDevice.Viewport.Unproject(top_left, projection, view, world);
-            Vector3 world_bottom_right = GraphicsDevice.Viewport.Unproject(bottom_right, projection, view, world);
-           
-            float width =   Math.Abs(world_bottom_right.X - world_top_left.X);
-            float height =  Math.Abs(world_bottom_right.Y - world_top_left.Y);
+            Vector3 world_bottom_right = GraphicsDevice.Viewport.Unproject(top_left, projection, view, world);
+            Vector3 world_top_left = GraphicsDevice.Viewport.Unproject(bottom_right, projection, view, world);
 
-            Rectangle3d screenRectangle = new Rectangle3d(world_top_left, width, height);
-            return screenRectangle;
+            float width = Math.Abs(world_bottom_right.X - world_top_left.X);
+            float height = Math.Abs(world_bottom_right.Y - world_top_left.Y);
+
+         
+            return new Rectangle((int)(world_top_left.X), (int)(world_top_left.Y), (int)(width), (int)(height));
         }
 
-        
+
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -111,8 +110,10 @@ namespace Asteroids
         /// </summary>
         protected override void Initialize()
         {
+            
+
             world = Matrix.CreateTranslation(0, 0, 0);
-            view = Matrix.CreateLookAt(new Vector3(0, 0, 1), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            view = Matrix.CreateLookAt(new Vector3(0, 0, -1), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
             //Matrix projection = Matrix.CreateOrthographic(Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.01f, 100f);
             projection = Matrix.CreateOrthographic(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height, 1.0f, 1000.0f);
 
@@ -126,11 +127,16 @@ namespace Asteroids
             graphic_systems = new List<GameSystem>();
             graphic_systems.Add(new VisualSystem(this));
             graphic_systems.Add(new AsteroidRenderSystem(this));
-            graphic_systems.Add(new GravitySystem(this));
+            graphic_systems.Add(new LaserRenderSystem(this));
+            graphic_systems.Add(new ShipRenderSystem(this));
+            
 
             logic_systems = new List<GameSystem>();
+            logic_systems.Add(new GravitySystem(this));
+            logic_systems.Add(new RotationForceSystem(this));
+            logic_systems.Add(new EntitiesCleanerSystem(this, getScreenRectangleInWorldCoordinates()));
 
-            getScreenRectangleInWorldCoordinates();
+            
 
             base.Initialize();
 
@@ -147,7 +153,7 @@ namespace Asteroids
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            
+
 
             assets_manager.addTexture(Content.Load<Texture2D>("PhoneGameThumb"));
             assets_manager.addTexture(Content.Load<Texture2D>("PhoneGameThumb"));
@@ -173,93 +179,6 @@ namespace Asteroids
             sprite2Height = texture2.Bounds.Height;
             sprite2Width = texture2.Bounds.Width;
 
-
-            //Create Entities
-            /*
-            for (int x = 1; x < 10; x++)
-            {
-                int entity = entity_manager.CreateEntity();
-                entity_manager.AddComponent(entity, new PositionComponent(x*10, 40));
-                entity_manager.AddComponent(entity, new VisualComponent(0, 1, 0, 0, 0));
-            }
-             * */
-
-
-
-            Rectangle3d screen_rect = getScreenRectangleInWorldCoordinates();
-
-
-            int ent = entity_manager.CreateEntity();
-            entity_manager.AddComponent(ent, new PositionComponent(0, 0));
-
-
-            entity_manager.AddComponent(ent, asteroid_generator.genearate(5));
-            entity_manager.AddComponent(ent, new RotationComponent(1));
-
-
-            ent = entity_manager.CreateEntity();
-            float x = screen_rect.TopLeft().X;
-            float y = screen_rect.TopLeft().Y;
-            entity_manager.AddComponent(ent, new PositionComponent(x,y));
-           // entity_manager.AddComponent(ent, new GravityComponent(new Vector2(10, 0), 100.0f));
-
-            entity_manager.AddComponent(ent, asteroid_generator.genearate(5));
-            entity_manager.AddComponent(ent, new RotationComponent(1));
-
-
-
-            ent = entity_manager.CreateEntity();
-            entity_manager.AddComponent(ent, new PositionComponent(50, 50));
-
-
-            entity_manager.AddComponent(ent, asteroid_generator.genearate(5));
-            entity_manager.AddComponent(ent, new RotationComponent(1));
-
-            ent = entity_manager.CreateEntity();
-            entity_manager.AddComponent(ent, new PositionComponent(10, 50));
-
-
-            entity_manager.AddComponent(ent, asteroid_generator.genearate(5));
-            entity_manager.AddComponent(ent, new RotationComponent(1));
-            
-
-
-          
-
-         
-        
-         //   entity = entity_manager.CreateEntity();
-           // entity_manager.AddComponent(entity, new PositionComponent(0, 0));
-            //entity_manager.AddComponent(entity, new VisualComponent(0, 1, 300, 0, 0));
-
-
-           
-
-            // TODO: use this.Content to load your game content here
-            basicEffect = new BasicEffect(GraphicsDevice);
-            basicEffect.World = world;
-            basicEffect.View = view;
-            basicEffect.Projection = projection;
-            basicEffect.VertexColorEnabled = true;
-            basicEffect.LightingEnabled = false;
-            basicEffect.FogEnabled = false;
-
-            VertexPositionColor[] vertices = new VertexPositionColor[3];
-            vertices[1] = new VertexPositionColor(new Vector3(0, 0, 0), Color.Black);
-            vertices[2] = new VertexPositionColor(new Vector3(0, 100, 0), Color.Black);
-            vertices[0] = new VertexPositionColor(new Vector3(100, 0, 0), Color.Black);
-            
-           // vertices[3] = new VertexPositionColor(new Vector3(0, 100, 0), Color.Black);
-           // vertices[4] = new VertexPositionColor(new Vector3(0, 0, 0), Color.Black);
-           // vertices[5] = new VertexPositionColor(new Vector3(0, 100, 0), Color.Black);
-
-            VertexPositionNormalTexture[] vertices2 = new VertexPositionNormalTexture[6];
-           
-
-          
-
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
-            vertexBuffer.SetData<VertexPositionColor>(vertices);
         }
 
         /// <summary>
@@ -285,15 +204,35 @@ namespace Asteroids
                 ButtonState.Pressed)
                 this.Exit();
 
+            TouchCollection touchCollection = TouchPanel.GetState();
+            foreach (TouchLocation tl in touchCollection)
+            {
+                if (tl.State == TouchLocationState.Pressed)
+                {
+                    Vector3 pos = GraphicsDevice.Viewport.Unproject(new Vector3(tl.Position.X, tl.Position.Y, 0), projection, view, world);
+                    int ent = entity_manager.CreateEntity();
+                    entity_manager.AddComponent(ent, new PositionComponent((int)(pos.X), (int)(pos.Y)));
+                    //entity_manager.AddComponent(ent, asteroid_generator.genearate(5));
+                    entity_manager.AddComponent(ent, new RotationComponent(new Vector2(pos.X, pos.Y)));
+                    //entity_manager.AddComponent(ent, new RotationForceComponent(true, 1f));
+                    entity_manager.AddComponent(ent, new GravityComponent(new Vector2(pos.X,pos.Y), 100f));
+                    entity_manager.AddComponent(ent, new ShipBodyComponent(10f));
+                    //entity_manager.AddComponent(ent, new LaserVisualComponent(Color.Pink, 10));
+                    
+                }
 
-            foreach(GameSystem system in logic_systems){
-                system.process(deltaTime, entity_manager);
+                if (tl.State == TouchLocationState.Released)
+                {
+                    //...on touch up code
+                }
+
             }
 
-            // Move the sprite around.
-           // UpdateSprite(gameTime, ref spritePosition1, ref spriteSpeed1);
-           // UpdateSprite(gameTime, ref spritePosition2, ref spriteSpeed2);
-          //  CheckForCollision();
+
+            foreach (GameSystem system in logic_systems)
+            {
+                system.process(deltaTime, entity_manager);
+            }
 
             base.Update(gameTime);
         }
@@ -312,111 +251,9 @@ namespace Asteroids
                 system.process(deltaTime, entity_manager);
             }
 
-            
-
-            // Draw the sprite.
-            /*
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-            spriteBatch.Draw(texture1, spritePosition1, Color.White);
-            spriteBatch.End();
-
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Opaque);
-            spriteBatch.Draw(texture2, spritePosition2, Color.Gray);
-            spriteBatch.End();
-             * */
-            /*
-            VertexPositionColor[] vertices = new VertexPositionColor[3];
-
-            vertices[0].Position = new Vector3(-0.5f, -0.5f, 0f);
-            vertices[0].Color = Color.Red;
-            vertices[1].Position = new Vector3(0, 0.5f, 0f);
-            vertices[1].Color = Color.Green;
-            vertices[2].Position = new Vector3(0.5f, -0.5f, 0f);
-            vertices[2].Color = Color.Yellow;
-
-            graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, vertices, 0, 1, VertexPositionColor.VertexDeclaration);
-            */
-
-           // GraphicsDevice.Clear(Color.CornflowerBlue);
-
-
-            /*
-            GraphicsDevice.SetVertexBuffer(vertexBuffer);
-
-            //RasterizerState rasterizerState = new RasterizerState();
-            //rasterizerState.CullMode = CullMode.None;
-            //GraphicsDevice.RasterizerState = rasterizerState;
-
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
-                
-            }
-             * */
-
-            //http://rbwhitaker.wikidot.com/drawing-triangles
-
             base.Draw(gameTime);
-
-           
         }
 
-        void UpdateSprite(GameTime gameTime, ref Vector2 spritePosition, ref Vector2 spriteSpeed)
-        {
-            // Move the sprite by speed, scaled by elapsed time.
-            spritePosition +=
-                spriteSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            int MaxX =
-                graphics.GraphicsDevice.Viewport.Width - texture1.Width;
-            int MinX = 0;
-            int MaxY =
-                graphics.GraphicsDevice.Viewport.Height - texture1.Height;
-            int MinY = 0;
-
-            // Check for bounce.
-            if (spritePosition.X > MaxX)
-            {
-                spriteSpeed.X *= -1;
-                spritePosition.X = MaxX;
-            }
-
-            else if (spritePosition.X < MinX)
-            {
-                spriteSpeed.X *= -1;
-                spritePosition.X = MinX;
-            }
-
-            if (spritePosition.Y > MaxY)
-            {
-                spriteSpeed.Y *= -1;
-                spritePosition.Y = MaxY;
-            }
-
-            else if (spritePosition.Y < MinY)
-            {
-                spriteSpeed.Y *= -1;
-                spritePosition.Y = MinY;
-            }
-
-        }
-
-        void CheckForCollision()
-        {
-            BoundingBox bb1 = new BoundingBox(
-                new Vector3(spritePosition1.X - (sprite1Width / 2), spritePosition1.Y - (sprite1Height / 2), 0),
-                new Vector3(spritePosition1.X + (sprite1Width / 2), spritePosition1.Y + (sprite1Height / 2), 0));
-
-            BoundingBox bb2 = new BoundingBox(
-                new Vector3(spritePosition2.X - (sprite2Width / 2), spritePosition2.Y - (sprite2Height / 2), 0),
-                new Vector3(spritePosition2.X + (sprite2Width / 2), spritePosition2.Y + (sprite2Height / 2), 0));
-
-            if (bb1.Intersects(bb2))
-            {
-                soundEffect.Play();
-            }
-
-        }
+       
     }
 }

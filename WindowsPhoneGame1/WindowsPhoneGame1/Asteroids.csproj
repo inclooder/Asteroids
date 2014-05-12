@@ -21,7 +21,8 @@
     <XapFilename>$(AssemblyName).xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <XnaWindowsPhoneManifestTemplate>Properties\WMAppManifest.xml</XnaWindowsPhoneManifestTemplate>
-    <TileImage>Background.png</TileImage>
+    <TileImage>
+    </TileImage>
     <TileTitle>WindowsPhoneGame1</TileTitle>
     <SupportedCultures>
     </SupportedCultures>
@@ -67,25 +68,32 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsteroidBodyComponent.cs" />
-    <Compile Include="AsteroidComponentGenerator.cs" />
-    <Compile Include="GravityComponent.cs" />
-    <Compile Include="GravitySystem.cs" />
-    <Compile Include="PositionComponent.cs" />
-    <Compile Include="Rectangle3d.cs" />
-    <Compile Include="RotationComponent.cs" />
-    <Compile Include="ShipBodyComponent.cs" />
-    <Compile Include="ShipRenderSystem.cs" />
-    <Compile Include="VisualComponent.cs" />
-    <Compile Include="EntityComponent.cs" />
-    <Compile Include="AsteroidBodyGenerator.cs" />
-    <Compile Include="AssetsManager.cs" />
-    <Compile Include="EntityManager.cs" />
-    <Compile Include="AsteroidRenderSystem.cs" />
-    <Compile Include="GameSystem.cs" />
+    <Compile Include="Components\AsteroidBodyComponent.cs" />
+    <Compile Include="Generators\AsteroidComponentGenerator.cs" />
+    <Compile Include="Systems\EntitiesCleanerSystem.cs" />
+    <Compile Include="Systems\GameGraphicSystem.cs" />
+    <Compile Include="Systems\GameLogicSystem.cs" />
+    <Compile Include="Components\GravityComponent.cs" />
+    <Compile Include="Systems\GravitySystem.cs" />
+    <Compile Include="Systems\LaserRenderSystem.cs" />
+    <Compile Include="Components\LaserVisualComponent.cs" />
+    <Compile Include="Components\PositionComponent.cs" />
+    <Compile Include="Utils\RectangleFloat.cs" />
+    <Compile Include="Components\RotationComponent.cs" />
+    <Compile Include="Components\RotationForceComponent.cs" />
+    <Compile Include="Systems\RotationForceSystem.cs" />
+    <Compile Include="Components\ShipBodyComponent.cs" />
+    <Compile Include="Systems\ShipRenderSystem.cs" />
+    <Compile Include="Components\VisualComponent.cs" />
+    <Compile Include="Components\EntityComponent.cs" />
+    <Compile Include="Generators\AsteroidBodyGenerator.cs" />
+    <Compile Include="Managers\AssetsManager.cs" />
+    <Compile Include="Managers\EntityManager.cs" />
+    <Compile Include="Systems\AsteroidRenderSystem.cs" />
+    <Compile Include="Systems\GameSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VelocityComponent.cs" />
-    <Compile Include="VisualSystem.cs" />
+    <Compile Include="Components\VelocityComponent.cs" />
+    <Compile Include="Components\VisualSystem.cs" />
     <None Include="Properties\AppManifest.xml">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </None>
