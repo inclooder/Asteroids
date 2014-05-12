@@ -69,7 +69,10 @@
   <ItemGroup>
     <Compile Include="AsteroidBodyComponent.cs" />
     <Compile Include="AsteroidComponentGenerator.cs" />
+    <Compile Include="GravityComponent.cs" />
+    <Compile Include="GravitySystem.cs" />
     <Compile Include="PositionComponent.cs" />
+    <Compile Include="Rectangle3d.cs" />
     <Compile Include="RotationComponent.cs" />
     <Compile Include="ShipBodyComponent.cs" />
     <Compile Include="ShipRenderSystem.cs" />

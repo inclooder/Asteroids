@@ -86,6 +86,22 @@ namespace Asteroids
             return entity_manager;
         }
 
+        public Rectangle3d getScreenRectangleInWorldCoordinates()
+        {
+            Rectangle viewport_rect = GraphicsDevice.Viewport.Bounds;
+            Vector3 top_left = new Vector3(viewport_rect.X, viewport_rect.Y, 0);
+            Vector3 bottom_right = new Vector3(viewport_rect.Width + top_left.X, viewport_rect.Height + top_left.Y, 0);
+
+            Vector3 world_top_left = GraphicsDevice.Viewport.Unproject(top_left, projection, view, world);
+            Vector3 world_bottom_right = GraphicsDevice.Viewport.Unproject(bottom_right, projection, view, world);
+           
+            float width =   Math.Abs(world_bottom_right.X - world_top_left.X);
+            float height =  Math.Abs(world_bottom_right.Y - world_top_left.Y);
+
+            Rectangle3d screenRectangle = new Rectangle3d(world_top_left, width, height);
+            return screenRectangle;
+        }
+
         
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -96,7 +112,7 @@ namespace Asteroids
         protected override void Initialize()
         {
             world = Matrix.CreateTranslation(0, 0, 0);
-            view = Matrix.CreateLookAt(new Vector3(0, 0, -1), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            view = Matrix.CreateLookAt(new Vector3(0, 0, 1), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
             //Matrix projection = Matrix.CreateOrthographic(Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.01f, 100f);
             projection = Matrix.CreateOrthographic(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height, 1.0f, 1000.0f);
 
@@ -110,10 +126,15 @@ namespace Asteroids
             graphic_systems = new List<GameSystem>();
             graphic_systems.Add(new VisualSystem(this));
             graphic_systems.Add(new AsteroidRenderSystem(this));
+            graphic_systems.Add(new GravitySystem(this));
 
             logic_systems = new List<GameSystem>();
 
+            getScreenRectangleInWorldCoordinates();
+
             base.Initialize();
+
+
         }
 
 
@@ -154,16 +175,19 @@ namespace Asteroids
 
 
             //Create Entities
-
+            /*
             for (int x = 1; x < 10; x++)
             {
                 int entity = entity_manager.CreateEntity();
                 entity_manager.AddComponent(entity, new PositionComponent(x*10, 40));
                 entity_manager.AddComponent(entity, new VisualComponent(0, 1, 0, 0, 0));
             }
+             * */
 
 
-        
+
+            Rectangle3d screen_rect = getScreenRectangleInWorldCoordinates();
+
 
             int ent = entity_manager.CreateEntity();
             entity_manager.AddComponent(ent, new PositionComponent(0, 0));
@@ -174,11 +198,15 @@ namespace Asteroids
 
 
             ent = entity_manager.CreateEntity();
-            entity_manager.AddComponent(ent, new PositionComponent(10, 0));
-
+            float x = screen_rect.TopLeft().X;
+            float y = screen_rect.TopLeft().Y;
+            entity_manager.AddComponent(ent, new PositionComponent(x,y));
+           // entity_manager.AddComponent(ent, new GravityComponent(new Vector2(10, 0), 100.0f));
 
             entity_manager.AddComponent(ent, asteroid_generator.genearate(5));
             entity_manager.AddComponent(ent, new RotationComponent(1));
+
+
 
             ent = entity_manager.CreateEntity();
             entity_manager.AddComponent(ent, new PositionComponent(50, 50));
