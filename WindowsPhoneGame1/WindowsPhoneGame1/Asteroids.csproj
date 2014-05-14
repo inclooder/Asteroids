@@ -68,16 +68,21 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollisionSystem.cs" />
+    <Compile Include="Components\CollisionComponent.cs" />
+    <Compile Include="EntitiesFactory.cs" />
+    <Compile Include="Systems\AsteroidsSpawnSystem.cs" />
     <Compile Include="Components\AsteroidBodyComponent.cs" />
     <Compile Include="Generators\AsteroidComponentGenerator.cs" />
+    <Compile Include="GraphicRenderer.cs" />
     <Compile Include="Systems\EntitiesCleanerSystem.cs" />
     <Compile Include="Systems\GameGraphicSystem.cs" />
-    <Compile Include="Systems\GameLogicSystem.cs" />
     <Compile Include="Components\GravityComponent.cs" />
     <Compile Include="Systems\GravitySystem.cs" />
     <Compile Include="Systems\LaserRenderSystem.cs" />
     <Compile Include="Components\LaserVisualComponent.cs" />
     <Compile Include="Components\PositionComponent.cs" />
+    <Compile Include="Utils\IntersectionHelper.cs" />
     <Compile Include="Utils\RectangleFloat.cs" />
     <Compile Include="Components\RotationComponent.cs" />
     <Compile Include="Components\RotationForceComponent.cs" />
@@ -86,7 +91,6 @@
     <Compile Include="Systems\ShipRenderSystem.cs" />
     <Compile Include="Components\VisualComponent.cs" />
     <Compile Include="Components\EntityComponent.cs" />
-    <Compile Include="Generators\AsteroidBodyGenerator.cs" />
     <Compile Include="Managers\AssetsManager.cs" />
     <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Systems\AsteroidRenderSystem.cs" />

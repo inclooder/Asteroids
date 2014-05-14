@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Asteroids
 {
-    class AsteroidBodyComponent : EntityComponent
+    public class AsteroidBodyComponent : EntityComponent
     {
         private static Color[] avil_colors = new Color[]{
             Color.Red,
@@ -84,10 +84,6 @@ namespace Asteroids
             int num_of_bones = bones.Length;
         
 
-        
-
-            
-
             for (int i = 0; i < num_of_bones - 1; i++)
             {
                 vertices_list.Add(new VertexPositionColor(new Vector3(0, 0, 0), Color.Yellow));
@@ -111,6 +107,6 @@ namespace Asteroids
             return bones;
         }
 
-
+      
     }
 }

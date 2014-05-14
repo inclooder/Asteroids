@@ -8,13 +8,13 @@ namespace Asteroids
 {
     class PositionComponent : EntityComponent
     {
-        public int x
+        public float x
         {
             get;
             set;
         }
 
-        public int y
+        public float y
         {
             get;
             set;
@@ -23,11 +23,18 @@ namespace Asteroids
 
 
 
-        public PositionComponent(int x, int y)
+        public PositionComponent(float x, float y)
             : base()
         {
             this.x = x;
             this.y = y;
+        }
+
+        public PositionComponent(Point pos) :base()
+        {
+            
+            this.x = pos.X;
+            this.y = pos.Y;
         }
 
         public Vector2 getPosition()
@@ -37,8 +44,8 @@ namespace Asteroids
 
         public void setPosition(Vector2 vector)
         {
-            this.x = (int)(vector.X);
-            this.y = (int)(vector.Y);
+            this.x = (float)(vector.X);
+            this.y = (float)(vector.Y);
         }
         
       

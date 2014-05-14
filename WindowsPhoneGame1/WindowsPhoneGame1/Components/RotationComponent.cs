@@ -14,21 +14,30 @@ namespace Asteroids
             set;
         }
 
-        public RotationComponent(float radians): base()
+        public RotationComponent(float degree): base()
         {
-            this.rotation = rotation;
+            this.rotation = MathHelper.ToRadians(degree);
         }
 
         public RotationComponent(Vector2 direction)
         {
-            direction.Normalize();
-            float angleFromVector =
-                  (float)Math.Atan2(direction.X, -direction.Y);
+            if (direction == new Vector2(0, 0))
+            {
+                this.rotation = 0;
+            }
+            else
+            {
+                direction.Normalize();
+                float angleFromVector =
+                      (float)Math.Atan2(direction.X, -direction.Y);
 
-            this.rotation = angleFromVector;
+                this.rotation = angleFromVector;
+            }
 
 
         }
+
+        
 
         public Matrix getRotationMatrix()
         {

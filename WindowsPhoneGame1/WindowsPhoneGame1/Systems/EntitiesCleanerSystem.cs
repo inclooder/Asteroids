@@ -19,7 +19,7 @@ namespace Asteroids
             this.bounds = bounds;
         }
 
-        public override void process(float deltaTime, EntityManager entity_manager)
+        public override void process(float deltaTime)
         {
             int[] entities = entity_manager.GetEntitiesWithComponent(typeof(PositionComponent));
 
@@ -30,7 +30,7 @@ namespace Asteroids
 
                 PositionComponent position = position_components.First();
 
-                if (!bounds.Contains(new Microsoft.Xna.Framework.Point(position.x, position.y)))
+                if (!bounds.Contains(new Microsoft.Xna.Framework.Point((int)position.x, (int)position.y)))
                 {
                     entity_manager.RemoveEntity(entity);
                 }

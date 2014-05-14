@@ -13,7 +13,7 @@ namespace Asteroids
 
         }
     
-        public override void process(float deltaTime, EntityManager entity_manager)
+        public override void process(float deltaTime)
         {
             int[] entities = entity_manager.GetEntitiesWithComponent(typeof(GravityComponent));
             foreach (int entity in entities)
@@ -30,11 +30,9 @@ namespace Asteroids
 
                 Vector2 current_position = position_component.getPosition();
 
-                Vector2 move_vector = gravity_component.getDirection() * gravity_component.getSpeed() * deltaTime;
+                Vector2 move_vector = gravity_component.getDirection() *gravity_component.getSpeed() * deltaTime;
 
-                current_position = Vector2.Add(current_position, move_vector);
-
-                position_component.setPosition(current_position);
+                position_component.setPosition(current_position + move_vector);
                
             }
           

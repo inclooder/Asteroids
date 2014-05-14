@@ -16,7 +16,7 @@ namespace Asteroids
             rotationDelta = 0;
         }
 
-        public override void process(float deltaTime, EntityManager entity_manager)
+        public override void process(float deltaTime)
         {
             rotationDelta += deltaTime;
             bool updateRotation = false;

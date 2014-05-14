@@ -7,22 +7,23 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Asteroids
 {
-    class AsteroidRenderSystem : GameGraphicSystem
+    class CollisionSystem : GameSystem
     {
 
-
-        public AsteroidRenderSystem(GameEngine game_engine)
+        public CollisionSystem(GameEngine game_engine)
             : base(game_engine)
         {
-            this.game_engine = game_engine;
 
         }
 
         public override void process(float deltaTime)
         {
 
-            
+            List<int> entities_to_delete = new List<int>();
+
             int[] entities = entity_manager.GetEntitiesWithComponent(typeof(AsteroidBodyComponent));
+            int[] lasers = entity_manager.GetEntitiesWithComponent(typeof(LaserVisualComponent));
+
             foreach (int entity in entities)
             {
                 AsteroidBodyComponent[] asteroid_body_components = entity_manager.GetComponentsOfType(entity, typeof(AsteroidBodyComponent)).Cast<AsteroidBodyComponent>().ToArray();
@@ -34,6 +35,9 @@ namespace Asteroids
                 if (rotation_components.Length <= 0) break;
 
                 PositionComponent position_comp = position_components.First();
+
+
+                bool skip = false;
 
                 foreach (AsteroidBodyComponent asteroid_body in asteroid_body_components)
                 {
@@ -57,17 +61,47 @@ namespace Asteroids
                             a = Vector2.Transform(a, m);
                             b = Vector2.Transform(b, m);
                             c = Vector2.Transform(c, m);
-                            renderer.fillTriangle(a, b, c, vertices[i].Color, vertices[i+1].Color, vertices[i+2].Color);
+                            //renderer.fillTriangle(a, b, c, vertices[i].Color, vertices[i + 1].Color, vertices[i + 2].Color);
+
+
+                            foreach (int laser_ent in lasers)
+                            {
+                                PositionComponent[] laser_position_components = entity_manager.GetComponentsOfType(laser_ent, typeof(PositionComponent)).Cast<PositionComponent>().ToArray();
+                                if (laser_position_components.Length < 0) continue;
+
+                                PositionComponent laser_pos = laser_position_components.First();
+                                if (IntersectionHelper.PointInsideTriangle(new Point((int)laser_pos.x, (int)laser_pos.y), new Point((int)a.X, (int)a.Y), new Point((int)b.X, (int)b.Y), new Point((int)c.X, (int)c.Y)))
+                                {
+                                    entities_to_delete.Add(laser_ent);
+                                    entities_to_delete.Add(entity);
+                                    skip = true;
+                                    break;
+                                }
+
+                            }
+                            if (skip) break;
+
+                            //Check laser - asteroid collisions
                         }
 
 
 
                     }
+                    if (skip) break;
                 }
-
             }
 
+            foreach (int ent_id in entities_to_delete.ToArray())
+            {
+                entity_manager.RemoveEntity(ent_id);
+            }
 
+           
+
+        
+
+
+            //entity_manager.GetEntitiesWithComponent(typeof(CollisionComponent))
         }
     }
 }

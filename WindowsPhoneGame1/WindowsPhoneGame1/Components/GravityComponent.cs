@@ -13,7 +13,7 @@ namespace Asteroids
 
         public GravityComponent(Vector2 direction, float speed)
         {
-            direction.Normalize();
+           // direction.Normalize();
             this.direction = direction;
             this.speed = speed;
         }
@@ -27,5 +27,7 @@ namespace Asteroids
         {
             return speed;
         }
+
+    
     }
 }

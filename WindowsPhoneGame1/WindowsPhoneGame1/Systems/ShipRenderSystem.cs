@@ -10,15 +10,13 @@ namespace Asteroids
     class ShipRenderSystem : GameGraphicSystem
     {
 
-
-
         public ShipRenderSystem(GameEngine game_engine)
             : base(game_engine)
         {
 
         }
 
-        public override void process(float deltaTime, EntityManager entity_manager)
+        public override void process(float deltaTime)
         {
             int[] entities = entity_manager.GetEntitiesWithComponent(typeof(ShipBodyComponent));
             foreach (int entity in entities)
@@ -37,51 +35,20 @@ namespace Asteroids
                 PositionComponent position_comp = position_components.First();
 
 
-
-                effect.World = game_engine.getWorldMatrix() * Matrix.CreateTranslation(new Vector3(position_comp.x, position_comp.y, 0));
-                Matrix new_world_matrix = game_engine.getWorldMatrix();
-
-
-                if (rotation_components.Length > 0)
-                {
-                    new_world_matrix *= rotation_components.First().getRotationMatrix();
-                }
-
-
-                new_world_matrix = new_world_matrix * Matrix.CreateTranslation(new Vector3(position_comp.x, position_comp.y, 0));
-
-
-
-                effect.World = new_world_matrix;
-           
-
                 foreach (ShipBodyComponent ship_body in ship_body_components)
                 {
-                    List<VertexPositionColor> vertices_list = new List<VertexPositionColor>();
+                    Matrix m = Matrix.CreateRotationZ(rotation_components.First().rotation);
+                    m *= Matrix.CreateTranslation(position_comp.x, position_comp.y, 0);
 
-                    vertices_list.Add(new VertexPositionColor(new Vector3(0, 0, 0), Color.Yellow));
-                    vertices_list.Add(new VertexPositionColor(new Vector3(30, 0, 0), Color.Yellow));
-                    vertices_list.Add(new VertexPositionColor(new Vector3(0, 30, 0), Color.Yellow));
+                    Vector2 a = new Vector2(-30, -30);
+                    Vector2 b = new Vector2(0, 0);
+                    Vector2 c = new Vector2(30, -30);
 
-                  
-                    vertexBuffer = new VertexBuffer(graphics_device, typeof(VertexPositionColor), vertices_list.Count, BufferUsage.WriteOnly);
-                    vertexBuffer.SetData<VertexPositionColor>(vertices_list.ToArray());
+                    a = Vector2.Transform(a, m);
+                    b = Vector2.Transform(b, m);
+                    c = Vector2.Transform(c, m);
 
-
-                    graphics_device.SetVertexBuffer(vertexBuffer);
-
-                    RasterizerState rasterizerState = new RasterizerState();
-                    rasterizerState.CullMode = CullMode.None;
-                    graphics_device.RasterizerState = rasterizerState;
-
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-                        graphics_device.DrawPrimitives(PrimitiveType.TriangleList, 0, (int)(vertices_list.Count / 3));
-
-                    }
-                 
-
+                    renderer.fillTriangle(a, b, c, Color.Black, Color.Yellow, Color.Black );
                 }
 
 

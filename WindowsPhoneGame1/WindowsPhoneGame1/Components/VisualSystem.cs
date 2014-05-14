@@ -20,7 +20,7 @@ namespace Asteroids
             batch = new SpriteBatch(graphics_device);
         }
 
-        public override void process(float deltaTime, EntityManager entity_manager)
+        public override void process(float deltaTime)
         {
             int[] entities = entity_manager.GetEntitiesWithComponent(typeof(VisualComponent));
             foreach(int entity in entities)
@@ -37,7 +37,7 @@ namespace Asteroids
 
                 Vector3 position = new Vector3(position_comp.x, position_comp.y, 0);
                 
-                position = graphics_device.Viewport.Project(position, game_engine.getProjectionMatrix(), game_engine.getViewMatrix(), game_engine.getWorldMatrix());
+                //position = graphics_device.Viewport.Project(position, game_engine.getProjectionMatrix(), game_engine.getViewMatrix(), game_engine.getWorldMatrix());
                
 
                 batch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);

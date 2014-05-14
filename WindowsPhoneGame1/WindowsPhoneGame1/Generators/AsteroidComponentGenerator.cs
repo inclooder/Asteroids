@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Asteroids
 {
-    class AsteroidComponentGenerator
+    public class AsteroidComponentGenerator
     {
         private int max_bone_length, min_bone_length;
         private Random num_gen;
