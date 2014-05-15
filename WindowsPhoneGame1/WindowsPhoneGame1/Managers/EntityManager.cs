@@ -62,7 +62,7 @@ namespace Asteroids
             Dictionary<int, List<EntityComponent>> component_store = GetComponentStore(component_type);
             if (!component_store.ContainsKey(entity_id))
             {
-                return null;
+                return new EntityComponent[0];
             }
             else
             {

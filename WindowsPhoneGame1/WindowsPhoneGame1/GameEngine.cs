@@ -20,35 +20,28 @@ namespace Asteroids
         AssetsManager assets_manager;
         EntitiesFactory entities_factory;
         AsteroidComponentGenerator asteroid_generator;
-        
         List<GameSystem> graphic_systems;
         List<GameSystem> logic_systems;
-        Texture2D[] textures;
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        Texture2D texture1;
-        Texture2D texture2;
-        Vector2 spritePosition1;
-        Vector2 spritePosition2;
-        Vector2 spriteSpeed1 = new Vector2(50.0f, 50.0f);
-        Vector2 spriteSpeed2 = new Vector2(100.0f, 100.0f);
-        int sprite1Height;
-        int sprite1Width;
-        int sprite2Height;
-        int sprite2Width;
-
-
         int player_entity;
-
-
-        Vector2 click = new Vector2(0, 0);
-
-    
         GraphicRenderer renderer;
-        
+        public SoundEffect soundEffect;
+        SpriteBatch batch;
+        SpriteFont calibriFont;
+        Random ran;
+        Color laser_color;
 
-    
-        SoundEffect soundEffect;
+        public int life
+        {
+            get;
+            set;
+        }
+
+        public int score
+        {
+            get;
+            set;
+        }
 
         public GameEngine()
         {
@@ -58,9 +51,10 @@ namespace Asteroids
 
             // Frame rate is 30 fps by default for Windows Phone.
             TargetElapsedTime = TimeSpan.FromTicks(333333);
-
             // Extend battery life under lock.
             InactiveSleepTime = TimeSpan.FromSeconds(1);
+
+           
         }
 
         public GraphicsDevice getGraphicsDevice()
@@ -92,6 +86,9 @@ namespace Asteroids
 
         protected override void Initialize()
         {
+            batch = new SpriteBatch(graphics.GraphicsDevice);
+            ran = new Random();
+            laser_color = Color.Yellow;
             renderer = new GraphicRenderer(GraphicsDevice);
             entity_manager = new EntityManager();
             assets_manager = new AssetsManager();
@@ -106,11 +103,12 @@ namespace Asteroids
             logic_systems.Add(new GravitySystem(this));
             logic_systems.Add(new RotationForceSystem(this));
             logic_systems.Add(new CollisionSystem(this));
-
+            
             Point[] spawns = new Point[] {
-                new Point(-10, 240),
                 new Point(-10, 120),
-                new Point(-10, 360)
+                new Point(-10, 360),
+                new Point(-10, 60),
+                new Point(-10, 420)
             };
 
             logic_systems.Add(new AsteroidsSpawnSystem(this, 10, spawns, true));
@@ -123,45 +121,55 @@ namespace Asteroids
                 GraphicsDevice.Viewport.Height + heightPane * 2);
             
             logic_systems.Add(new EntitiesCleanerSystem(this, worldRect));
+
+            life = 10;
+            score = 0;
+
             base.Initialize();
+        }
+
+
+        public void updateLaserColor()
+        {
+            int[] asteroids = entity_manager.GetEntitiesWithComponent(typeof(AsteroidBodyComponent));
+            List<Color> colors = new List<Color>();
+            
+            foreach (int asteroid in asteroids)
+            {
+                AsteroidBodyComponent[] asteroid_body_components = entity_manager.GetComponentsOfType(asteroid, typeof(AsteroidBodyComponent)).Cast<AsteroidBodyComponent>().ToArray();
+                if (asteroid_body_components.Length < 0) break;
+
+                AsteroidBodyComponent body_component = asteroid_body_components.First();
+
+                VertexPositionColor[] component_colors = body_component.getVertices();
+                for (int i = 0; i < component_colors.Length; i += 3)
+                {
+                    colors.Add(component_colors[i].Color);
+                }
+            }
+
+            ShipBodyComponent[] player_ship_components = entity_manager.GetComponentsOfType(player_entity, typeof(ShipBodyComponent)).Cast<ShipBodyComponent>().ToArray();
+            if (player_ship_components.Length > 0)
+            {
+                ShipBodyComponent ship_component = player_ship_components.First();
+                Color[] avil_colors = colors.ToArray();
+                ship_component.color = avil_colors[ran.Next(0, avil_colors.Length) % avil_colors.Length];
+                laser_color = ship_component.color;
+            }
         }
 
 
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-
-
-            assets_manager.addTexture(Content.Load<Texture2D>("PhoneGameThumb"));
-            assets_manager.addTexture(Content.Load<Texture2D>("PhoneGameThumb"));
-            textures = new Texture2D[] {
-                Content.Load<Texture2D>("PhoneGameThumb"),
-                Content.Load<Texture2D>("PhoneGameThumb")
-            };
-
-            texture1 = textures[0];
-            texture2 = textures[1];
-
             soundEffect = Content.Load<SoundEffect>("Windows Ding");
-
-            spritePosition1.X = 0;
-            spritePosition1.Y = 0;
-
-            spritePosition2.X = graphics.GraphicsDevice.Viewport.Width - texture1.Width;
-            spritePosition2.Y = graphics.GraphicsDevice.Viewport.Height - texture1.Height;
-
-            sprite1Height = texture1.Bounds.Height;
-            sprite1Width = texture1.Bounds.Width;
-
-            sprite2Height = texture2.Bounds.Height;
-            sprite2Width = texture2.Bounds.Width;
+          
+            calibriFont = Content.Load<SpriteFont>("Calibri");
+            
 
             player_entity = entity_manager.CreateEntity();
             entity_manager.AddComponent(player_entity, new PositionComponent(770, 240));
             entity_manager.AddComponent(player_entity, new RotationComponent(90f));
-            entity_manager.AddComponent(player_entity, new ShipBodyComponent(10.0f));
+            entity_manager.AddComponent(player_entity, new ShipBodyComponent(Color.Yellow));
 
         }
 
@@ -186,27 +194,15 @@ namespace Asteroids
             {
                 if (tl.State == TouchLocationState.Pressed)
                 {
-                    click = new Vector2((int)(tl.Position.X), (int)(tl.Position.Y));
+                    Vector2 click = new Vector2((int)(tl.Position.X), (int)(tl.Position.Y));
                     Vector2 player = new Vector2(770, 240);
                     Vector2 substracted = new Vector2(player.X - click.X, player.Y - click.Y);
-
-
                     int ent = entity_manager.CreateEntity();
                     entity_manager.AddComponent(ent, new PositionComponent((int)player.X, (int)player.Y));
-                    //entity_manager.AddComponent(ent, asteroid_generator.genearate(5));
-                    entity_manager.AddComponent(ent, new RotationComponent(substracted));
-                    //entity_manager.AddComponent(ent, new RotationForceComponent(true, 1f));
-                               
-                    //Vector2 gravity = new Vector2(800, 240);
-   
-                    //gravity = Vector2.Add(gravity, new Vector2((int)(tl.Position.X), (int)(tl.Position.Y)));
-                    //gravity.Normalize();
-                    //gravity = Vector2.Negate(gravity);
-
+                    entity_manager.AddComponent(ent, new RotationComponent(substracted)); 
                     substracted.Normalize();
                     entity_manager.AddComponent(ent, new GravityComponent(Vector2.Negate(substracted), 400f));
-                    //entity_manager.AddComponent(ent, new ShipBodyComponent(10f));
-                    entity_manager.AddComponent(ent, new LaserVisualComponent(Color.Pink, 3));
+                    entity_manager.AddComponent(ent, new LaserVisualComponent(laser_color, 3));
                     
                 }
 
@@ -223,6 +219,8 @@ namespace Asteroids
                 system.process(deltaTime);
             }
 
+            entities_factory.setLevel((int)(score / 2));
+
             base.Update(gameTime);
         }
 
@@ -230,11 +228,21 @@ namespace Asteroids
         protected override void Draw(GameTime gameTime)
         {
             graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+      
+       
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             foreach (GameSystem system in graphic_systems)
             {
                 system.process(deltaTime);
             }
+
+            batch.Begin();
+
+            batch.DrawString(calibriFont, String.Format("Life {0}", life), new Vector2(770, 100), Color.Black, MathHelper.ToRadians(270), new Vector2(0, 0), 1f, SpriteEffects.None, 0);
+            batch.DrawString(calibriFont, String.Format("Score {0}", score), new Vector2(750, 100), Color.Black, MathHelper.ToRadians(270), new Vector2(0, 0), 1f, SpriteEffects.None, 0);
+            batch.DrawString(calibriFont, String.Format("Level {0}", entities_factory.getLevel()), new Vector2(730, 100), Color.Black, MathHelper.ToRadians(270), new Vector2(0, 0), 1f, SpriteEffects.None, 0);
+            batch.End();
+          
             base.Draw(gameTime);
         }
     }

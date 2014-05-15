@@ -57,7 +57,8 @@ namespace Asteroids
                             a = Vector2.Transform(a, m);
                             b = Vector2.Transform(b, m);
                             c = Vector2.Transform(c, m);
-                            renderer.fillTriangle(a, b, c, vertices[i].Color, vertices[i+1].Color, vertices[i+2].Color);
+                           // renderer.fillTriangle(a, b, c, vertices[i].Color, vertices[i+1].Color, vertices[i+2].Color);
+                            renderer.fillTriangle(a, b, c, Color.Yellow, vertices[i + 1].Color, vertices[i + 2].Color);
                         }
 
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Asteroids
 {
-    abstract class GameSystem
+    public abstract class GameSystem
     {
         protected GameEngine game_engine;
         protected EntityManager entity_manager;

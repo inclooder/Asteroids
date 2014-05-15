@@ -13,14 +13,7 @@ namespace Asteroids
             Color.Red,
             Color.Blue,
             Color.Green,
-            Color.Gray,
-            Color.Pink,
-            Color.Purple,
-            Color.Tomato,
-            Color.Teal,
-            Color.Tan,
-            Color.Maroon,
-            Color.Firebrick
+            Color.Black
         };
         
         private List<float> bones_length;
@@ -54,14 +47,14 @@ namespace Asteroids
             for (int i = 0; i < bones_length.Count; i++)
             {
                 
-                while (true)
-                {
+               // while (true)
+                //{
                     int ran = rand.Next(0, avil_colors.Length);
-                    if (colors_used.Contains(ran)) continue;
+                  //  if (colors_used.Contains(ran)) continue;
                     colors[i] = avil_colors[ran];
                     colors_used.Add(ran);
-                    break;
-                }
+                  //  break;
+                //}
             }
         }
       
@@ -86,12 +79,12 @@ namespace Asteroids
 
             for (int i = 0; i < num_of_bones - 1; i++)
             {
-                vertices_list.Add(new VertexPositionColor(new Vector3(0, 0, 0), Color.Yellow));
+                vertices_list.Add(new VertexPositionColor(new Vector3(0, 0, 0), colors[i + 1]));
                 vertices_list.Add(new VertexPositionColor(new Vector3(bones[i].X, bones[i].Y, 0), colors[i+1]));
                 vertices_list.Add(new VertexPositionColor(new Vector3(bones[i + 1].X, bones[i + 1].Y, 0), colors[i+1]));
             }
 
-            vertices_list.Add(new VertexPositionColor(new Vector3(0, 0, 0), Color.Yellow));
+            vertices_list.Add(new VertexPositionColor(new Vector3(0, 0, 0), colors[0]));
             vertices_list.Add(new VertexPositionColor(new Vector3(bones.Last().X, bones.Last().Y, 0), colors[0]));
             vertices_list.Add(new VertexPositionColor(new Vector3(bones.First().X, bones.First().Y, 0), colors[0]));
                         

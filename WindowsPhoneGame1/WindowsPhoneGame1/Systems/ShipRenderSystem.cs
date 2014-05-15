@@ -40,15 +40,20 @@ namespace Asteroids
                     Matrix m = Matrix.CreateRotationZ(rotation_components.First().rotation);
                     m *= Matrix.CreateTranslation(position_comp.x, position_comp.y, 0);
 
-                    Vector2 a = new Vector2(-30, -30);
+                    Vector2 position = new Vector2(0, 0);
+
+                    position = Vector2.Transform(position, m);
+
+                    Vector2 a = new Vector2(-70, -30);
                     Vector2 b = new Vector2(0, 0);
-                    Vector2 c = new Vector2(30, -30);
+                    Vector2 c = new Vector2(70, -30);
 
                     a = Vector2.Transform(a, m);
                     b = Vector2.Transform(b, m);
                     c = Vector2.Transform(c, m);
 
-                    renderer.fillTriangle(a, b, c, Color.Black, Color.Yellow, Color.Black );
+                    renderer.fillTriangle(b, a, c, Color.Black, ship_body.color, ship_body.color);
+                   
                 }
 
 

@@ -59,9 +59,11 @@ namespace Asteroids
 
             if (asteroids.Length < maxAsteroids)
             {
+
                 //Add asteroids
                 Point pos = spawn_points[ran.Next(0, spawn_points.Length) % spawn_points.Length];
                 entities_factory.createAsteroid(new Vector2(pos.X, pos.Y));
+                game_engine.updateLaserColor();
                 /*
                 int ent = entity_manager.CreateEntity();
                 

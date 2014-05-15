@@ -30,25 +30,25 @@ namespace Asteroids
             if (level < 5)
             {
                 asteroid_component_generator = new AsteroidComponentGenerator(40, 60);
-                asteroids_rotation_speed = 0.4f;
+                asteroids_rotation_speed = 1f;
                 asteroid_parts_count = 3;
             }
             else if (level < 10)
             {
                 asteroid_component_generator = new AsteroidComponentGenerator(30, 50);
-                asteroids_rotation_speed = 0.8f;
+                asteroids_rotation_speed = 1.2f;
                 asteroid_parts_count = 4;
             }
             else if (level < 15)
             {
                 asteroid_component_generator = new AsteroidComponentGenerator(30, 40);
-                asteroids_rotation_speed = 1f;
+                asteroids_rotation_speed = 1.4f;
                 asteroid_parts_count = 5;
             }
             else
             {
                 asteroid_component_generator = new AsteroidComponentGenerator(20, 30);
-                asteroids_rotation_speed = 1.2f;
+                asteroids_rotation_speed = 1.6f;
                 asteroid_parts_count = 6;
             }
         }

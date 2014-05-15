@@ -63,28 +63,44 @@ namespace Asteroids
                             c = Vector2.Transform(c, m);
                             //renderer.fillTriangle(a, b, c, vertices[i].Color, vertices[i + 1].Color, vertices[i + 2].Color);
 
+                            Color triangleColor = vertices[i+2].Color;
+
+
 
                             foreach (int laser_ent in lasers)
                             {
                                 PositionComponent[] laser_position_components = entity_manager.GetComponentsOfType(laser_ent, typeof(PositionComponent)).Cast<PositionComponent>().ToArray();
+                                LaserVisualComponent[] laser_visual_components = entity_manager.GetComponentsOfType(laser_ent, typeof(LaserVisualComponent)).Cast<LaserVisualComponent>().ToArray();
+
                                 if (laser_position_components.Length < 0) continue;
+                                if (laser_visual_components.Length < 0) continue;
 
                                 PositionComponent laser_pos = laser_position_components.First();
-                                if (IntersectionHelper.PointInsideTriangle(new Point((int)laser_pos.x, (int)laser_pos.y), new Point((int)a.X, (int)a.Y), new Point((int)b.X, (int)b.Y), new Point((int)c.X, (int)c.Y)))
-                                {
-                                    entities_to_delete.Add(laser_ent);
-                                    entities_to_delete.Add(entity);
-                                    skip = true;
-                                    break;
-                                }
 
+                                    if (IntersectionHelper.PointInsideTriangle(new Point((int)laser_pos.x, (int)laser_pos.y), new Point((int)a.X, (int)a.Y), new Point((int)b.X, (int)b.Y), new Point((int)c.X, (int)c.Y)))
+                                    {
+                                        entities_to_delete.Add(laser_ent);
+
+                                        if (laser_visual_components.First().color == triangleColor)
+                                        {
+                                            game_engine.score += 1;
+                                            game_engine.soundEffect.Play();
+                                            entities_to_delete.Add(entity);
+                                            skip = true;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            game_engine.life -= 1;
+                                        }
+                                        
+                                    }
+                                
                             }
                             if (skip) break;
 
                             //Check laser - asteroid collisions
                         }
-
-
 
                     }
                     if (skip) break;

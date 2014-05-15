@@ -2,21 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace Asteroids
 {
     class ShipBodyComponent : EntityComponent
     {
-        private float scale;
-
-        public ShipBodyComponent(float scale)
+        public Color color
         {
-            this.scale = scale;
+            get;
+            set;
         }
 
-        public float getScale()
+        public ShipBodyComponent(Color color)
         {
-            return scale;
+            this.color = color;
         }
+
+      
     }
 }

@@ -32,6 +32,14 @@ namespace Asteroids
 
                 if (!bounds.Contains(new Microsoft.Xna.Framework.Point((int)position.x, (int)position.y)))
                 {
+
+
+                    LaserVisualComponent[] laser_components = entity_manager.GetComponentsOfType(entity, typeof(LaserVisualComponent)).Cast<LaserVisualComponent>().ToArray();
+                    if (laser_components.Length > 0)
+                    {
+                        
+                        game_engine.life -= 1;
+                    }
                     entity_manager.RemoveEntity(entity);
                 }
 
